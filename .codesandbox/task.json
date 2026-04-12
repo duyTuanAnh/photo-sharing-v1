@@ -1,14 +1,13 @@
 {
-  "$schema": "https://codesandbox.io/schemas/tasks.json",
   "setupTasks": [
     {
-      "name": "Install dependencies",
+      "name": "Cài đặt thư viện Frontend",
       "command": "cd photo-sharing-v1 && npm install"
     }
   ],
   "tasks": {
-    "dev-server": {
-      "name": "Start app",
+    "start-frontend": {
+      "name": "Chạy Frontend",
       "command": "cd photo-sharing-v1 && npm start",
       "runAtStart": true,
       "preview": {
