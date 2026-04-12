@@ -1,0 +1,18 @@
+{
+  "setupTasks": [
+    {
+      "name": "Cài đặt thư viện Frontend",
+      "command": "cd photo-sharing-v1 && npm install"
+    }
+  ],
+  "tasks": {
+    "start-frontend": {
+      "name": "Run Frontend",
+      "command": "cd photo-sharing-v1 && npm start",
+      "runAtStart": true,
+      "preview": {
+        "port": 3000
+      }
+    }
+  }
+}
