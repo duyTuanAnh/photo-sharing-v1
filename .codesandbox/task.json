@@ -1,0 +1,19 @@
+{
+  "$schema": "https://codesandbox.io/schemas/tasks.json",
+  "setupTasks": [
+    {
+      "name": "Install dependencies",
+      "command": "cd photo-sharing-v1 && npm install"
+    }
+  ],
+  "tasks": {
+    "dev-server": {
+      "name": "Start app",
+      "command": "cd photo-sharing-v1 && npm start",
+      "runAtStart": true,
+      "preview": {
+        "port": 3000
+      }
+    }
+  }
+}
