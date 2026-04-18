@@ -6,7 +6,7 @@
  */
 const fetchModel = async (url) => {
   try {
-    const response = await fetch(`http://localhost:8080${url}`);
+    const response = await fetch(`https://x6vsmn-8081.csb.app/api${url}`);
 
     if (!response.ok) {
       throw new Error("Network response was not ok");
