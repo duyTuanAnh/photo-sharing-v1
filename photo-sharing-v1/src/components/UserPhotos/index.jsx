@@ -19,6 +19,21 @@ function UserPhotos() {
     });
   }, [userId]);
 
+  function formatDateTime(dateString) {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+  
+
   return (
     <>
       <h2>
@@ -33,7 +48,7 @@ function UserPhotos() {
             style={{ maxWidth: "400px" }}
           />
 
-          <h2>Created at: {photo.date_time}</h2>
+          <h2>Created at: {formatDateTime(photo.date_time)}</h2>
 
           <div style={{ marginLeft: "20px" }}>
             {(photo.comments || []).length === 0 && <h4>No comments</h4>}
@@ -50,7 +65,7 @@ function UserPhotos() {
                     {c.user.first_name} {c.user.last_name}
                   </Link>
                   {" at: "}
-                  {c.date_time}
+                  {formatDateTime(c.date_time)}
                 </p>
               </div>
             ))}

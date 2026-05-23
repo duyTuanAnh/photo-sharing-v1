@@ -1,40 +1,140 @@
 import "./App.css";
 
-import React from "react";
+import React, { useState } from "react";
 import { Grid, Typography, Paper } from "@mui/material";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 
 import TopBar from "./components/TopBar";
+import Login from "./components/Login";
 import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import UserComments from "./components/UserComment";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-const App = (props) => {
+function AppLayOut() {
+  const nav = useNavigate();
+  const [curUser, setCurUser] = useState(() => {
+    const savedUser = localStorage.getItem("curUser");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const handleLogin = (user) => {
+    setCurUser(user);
+    nav(`/users/${user._id}`);
+  };
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await fetch("https://x6vsmn-8081.csb.app/admin/logout", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("curUser");
+
+    setCurUser(null);
+    nav("/login");
+  };
   return (
-    <Router>
-      <div>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TopBar />
-          </Grid>
-          <div className="main-topbar-buffer" />
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TopBar curUser={curUser} onLogout={handleLogout} />
+        </Grid>
+        <div className="main-topbar-buffer" />
+        {curUser && (
           <Grid item sm={3}>
             <Paper className="main-grid-item">
               <UserList />
             </Paper>
           </Grid>
-          <Grid item sm={9}>
-            <Paper className="main-grid-item">
-              <Routes>
-                <Route path="/users/:userId" element={<UserDetail />} />
-                <Route path="/photos/:userId" element={<UserPhotos />} />
-                <Route path="/comments/:userId" element={<UserComments />} />
-              </Routes>
-            </Paper>
-          </Grid>
+        )}
+
+        <Grid item sm={9}>
+          <Paper className="main-grid-item">
+            <Routes>
+            <Route
+    path="/"
+    element={
+      curUser ? (
+        <Navigate to={`/users/${curUser._id}`} replace />
+      ) : (
+        <Navigate to="/login" replace />
+      )
+    }
+  />
+              <Route
+                path="/login"
+                element={
+                  curUser ? (
+                    <Navigate to={`/users/${curUser._id}`} replace />
+                  ) : (
+                    <Login onLogin={handleLogin} />
+                  )
+                }
+              />
+
+              <Route
+                path="/users/:userId"
+                element={
+                  <ProtectedRoute currentUser={curUser}>
+                    <UserDetail />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/photos/:userId"
+                element={
+                  <ProtectedRoute currentUser={curUser}>
+                    <UserPhotos />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/comments/:userId"
+                element={
+                  <ProtectedRoute currentUser={curUser}>
+                    <UserComments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+    path="*"
+    element={
+      curUser ? (
+        <Navigate to={`/users/${curUser._id}`} replace />
+      ) : (
+        <Navigate to="/login" replace />
+      )
+    }
+  />
+            </Routes>
+          </Paper>
         </Grid>
-      </div>
+      </Grid>
+    </div>
+  );
+}
+
+const App = () => {
+  return (
+    <Router>
+      <AppLayOut />
     </Router>
   );
 };

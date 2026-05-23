@@ -6,7 +6,12 @@
  */
 const fetchModel = async (url) => {
   try {
-    const response = await fetch(`https://x6vsmn-8081.csb.app/api${url}`);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`https://x6vsmn-8081.csb.app/api${url}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Network response was not ok");
