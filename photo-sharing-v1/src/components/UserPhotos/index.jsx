@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 import AddComment from "../../components/AddComment";
 
-function UserPhotos() {
+function UserPhotos({photoRefresh}) {
   const { userId } = useParams();
 
   const [photos, setPhotos] = useState([]);
@@ -18,7 +18,7 @@ function UserPhotos() {
     fetchModel(`/user/${userId}`).then((data) => {
       setUser(data || null);
     });
-  }, [userId]);
+  }, [userId, photoRefresh]);
 
   function formatDateTime(dateString) {
     if (!dateString) return "";
@@ -56,6 +56,7 @@ function UserPhotos() {
 
       {photos.map((photo) => (
         <div key={photo._id} style={{ marginBottom: "30px" }}>
+          <hr />
           <img
             src={`https://x6vsmn-8081.csb.app/images/${photo.file_name}`}
             alt=""

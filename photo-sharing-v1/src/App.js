@@ -25,6 +25,14 @@ function AppLayOut() {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
+  // biến check upload photo
+  const [photoRefresh, setPhotoRefresh] = useState(0);
+
+  // +1 nếu đã up photo
+  const handlePhotoUploaded = ()=>{
+    setPhotoRefresh((pre) => pre+1);
+  }
+
   const handleLogin = (user) => {
     setCurUser(user);
     nav(`/users/${user._id}`);
@@ -52,7 +60,7 @@ function AppLayOut() {
     <div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TopBar curUser={curUser} onLogout={handleLogout} />
+          <TopBar curUser={curUser} onLogout={handleLogout} onPhotoUploaded={handlePhotoUploaded}/>
         </Grid>
         <div className="main-topbar-buffer" />
         {curUser && (
@@ -66,16 +74,16 @@ function AppLayOut() {
         <Grid item sm={9}>
           <Paper className="main-grid-item">
             <Routes>
-            <Route
-    path="/"
-    element={
-      curUser ? (
-        <Navigate to={`/users/${curUser._id}`} replace />
-      ) : (
-        <Navigate to="/login" replace />
-      )
-    }
-  />
+              <Route
+                path="/"
+                element={
+                  curUser ? (
+                    <Navigate to={`/users/${curUser._id}`} replace />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
               <Route
                 path="/login"
                 element={
@@ -100,7 +108,7 @@ function AppLayOut() {
                 path="/photos/:userId"
                 element={
                   <ProtectedRoute currentUser={curUser}>
-                    <UserPhotos />
+                    <UserPhotos photoRefresh={photoRefresh}/>
                   </ProtectedRoute>
                 }
               />
@@ -114,15 +122,15 @@ function AppLayOut() {
                 }
               />
               <Route
-    path="*"
-    element={
-      curUser ? (
-        <Navigate to={`/users/${curUser._id}`} replace />
-      ) : (
-        <Navigate to="/login" replace />
-      )
-    }
-  />
+                path="*"
+                element={
+                  curUser ? (
+                    <Navigate to={`/users/${curUser._id}`} replace />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
             </Routes>
           </Paper>
         </Grid>

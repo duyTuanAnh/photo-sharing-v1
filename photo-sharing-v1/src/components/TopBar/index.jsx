@@ -1,77 +1,95 @@
-import {useState, useEffect} from "react";
+import { useRef } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import { useLocation, matchPath, Link } from "react-router-dom";
-import fetchModel from "../../lib/fetchModelData";
-import models from "../../modelData/models";
+import { useNavigate } from "react-router-dom";
 
-function TopBar({ curUser, onLogout }) {
-  const location = useLocation();
-  const [contextText, setContextText] = useState("");
+function TopBar({ curUser, onLogout, onPhotoUploaded }) {
+  // khởi tạo ref để hiển thị thư mục cho người dùng chọn file khi bấm addPhoto
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const userDetailMatch = matchPath("/users/:userId", location.pathname);
-    const userPhotosMatch = matchPath("/photos/:userId", location.pathname);
-    const userCommentsMatch = matchPath("/comments/:userId", location.pathname);
+  // khởi tạo hàm kích hoạt
+  const handleAddPhoto = () => {
+    fileInputRef.current.click();
+  };
 
-    async function loadContextText() {
-      if (userDetailMatch) {
-        const userId = userDetailMatch.params.userId;
-        const user = await fetchModel(`/user/${userId}`);
-        if (user) {
-          setContextText(`${user.first_name} ${user.last_name}`);
-        }
-      } else if (userPhotosMatch) {
-        const userId = userPhotosMatch.params.userId;
-        const user = await fetchModel(`/user/${userId}`);
-        if (user) {
-          setContextText(`Photos of ${user.first_name} ${user.last_name}`);
-        }
-      } else if (userCommentsMatch) {
-        const userId = userCommentsMatch.params.userId;
-        const user = await fetchModel(`/user/${userId}`);
-        if (user) {
-          setContextText(`Comments of ${user.first_name} ${user.last_name}`);
-        }
-      } else setContextText("");
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    const token = localStorage.getItem("token");
+    // sử dụng formData để xử lý file
+    const formData = new FormData();
+    formData.append("uploadedphoto", file);
+    try{
+      const res = await fetch("https://x6vsmn-8081.csb.app/api/photos/new",{
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+      if(!res.ok){
+        alert("Upload photo failed");
+        return;
+      }
+
+      // thông báo để userPhoto re-render
+      if(onPhotoUploaded) onPhotoUploaded();
+      navigate(`/photos/${curUser._id}`);
+    }catch(error){
+      console.log(error);
     }
+    e.target.value="";
+  };
 
-    loadContextText();
-  }, [location.pathname]);
+  if (!curUser) {
+    return (
+      <AppBar className="topbar-appBar" position="fixed">
+        <Toolbar className="topbar-toolbar">
+          <Typography variant="h6">Please Login</Typography>
+        </Toolbar>
+      </AppBar>
+    );
+  }
 
   return (
     <AppBar className="topbar-appBar" position="fixed">
       <Toolbar className="topbar-toolbar">
-        <Typography variant="h6" className="topbar-left">
+        {/* <Typography variant="h6" className="topbar-left">
           Nguyễn Duy Tuấn Anh
-        </Typography>
+        </Typography> */}
 
         <Typography
-          variant="h6"
-          className="topbar-right"
-          style={{ textAlign: "center", marginLeft: "auto" }}
+          variant="body1"
+          // style={{ textAlign: "right", marginLeft: "auto" }}
+          className="topbar-left"
         >
-          {contextText}
+          <h3>Hi {curUser.first_name} </h3>
         </Typography>
+        
+        <Button
+          variant="contained"
+          color="inherit"
+          style={{ margin: "10px" }}
+          onClick={handleAddPhoto} //kích hoạt để mở thư mục chọn file
+        >
+          <span style={{color:"black"}}>Add Photo</span>
+        </Button>
 
-        {curUser ? (
-          <>
-            <Typography
-              variant="body1"
-              style={{ textAlign: "right", marginLeft: "auto" }}
-              className="topbar-left"
-            >
-              <h3>Hi {curUser.first_name} </h3>
-            </Typography>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: "none" }}
+          onChange={handlePhotoChange}
+        />
 
-            <Button variant="contained" color="secondary" onClick={onLogout}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <Typography variant="body1">
-            <Link to="/login">Please Login</Link>
-          </Typography>
-        )}
+        <Button
+          variant="contained"
+          style={{ margin: "10px" }}
+          color="inherit"
+          onClick={onLogout}
+        >
+          <span style={{ color: "black" }}>Logout</span>
+        </Button>
       </Toolbar>
     </AppBar>
   );
