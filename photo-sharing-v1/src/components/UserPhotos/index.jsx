@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./styles.css";
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
+import AddComment from "../../components/AddComment";
 
 function UserPhotos() {
   const { userId } = useParams();
@@ -32,7 +33,20 @@ function UserPhotos() {
       minute: "2-digit",
     });
   }
-  
+
+  const handleCommentAdded = (photoId, newComment) => {
+    setPhotos((pre) =>
+      pre.map((photo) => {
+        if (photo._id === photoId) {
+          return {
+            ...photo,
+            comments: [...(photo.comments || []), newComment],
+          };
+        }
+        return photo;
+      })
+    );
+  };
 
   return (
     <>
@@ -70,6 +84,7 @@ function UserPhotos() {
               </div>
             ))}
           </div>
+          <AddComment photoId={photo._id} onCommentAdded={handleCommentAdded} />
         </div>
       ))}
     </>
