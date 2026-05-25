@@ -70,7 +70,8 @@ function LoginRegister({ onLogin }) {
         }),
       });
       if (!res.ok) {
-        setRegisterError("Register failed");
+        const errorMessage = await res.text();
+        setRegisterError(errorMessage);
         return;
       }
       setRegisterSuccess("Register successful");
@@ -91,13 +92,13 @@ function LoginRegister({ onLogin }) {
             placeholder="Login name"
             {...loginRegister("login_name", { required: true })}
           />
-          <br />
           {loginErrors.login_name && (
             <span style={{ color: "red" }}>
               you have not provide login name
             </span>
           )}
         </div>
+        <br />
         <div style={{ display: "flex" }}>
           <input
             type="password"
