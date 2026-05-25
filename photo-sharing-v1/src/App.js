@@ -1,7 +1,7 @@
 import "./App.css";
 
 import React, { useState } from "react";
-import { Grid, Typography, Paper } from "@mui/material";
+import { Grid, Paper } from "@mui/material";
 import {
   BrowserRouter as Router,
   Route,
@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 
 import TopBar from "./components/TopBar";
-import Login from "./components/Login";
+import LoginRegister from "./components/LoginRegister";
 import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
@@ -20,18 +20,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppLayOut() {
   const nav = useNavigate();
+
   const [curUser, setCurUser] = useState(() => {
     const savedUser = localStorage.getItem("curUser");
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  // biến check upload photo
   const [photoRefresh, setPhotoRefresh] = useState(0);
+  const [userListRefresh, setUserListRefresh] = useState(0);
 
-  // +1 nếu đã up photo
-  const handlePhotoUploaded = ()=>{
-    setPhotoRefresh((pre) => pre+1);
-  }
+  const handlePhotoUploaded = () => {
+    setPhotoRefresh((prev) => prev + 1);
+    setUserListRefresh((prev) => prev + 1);
+  };
 
   const handleLogin = (user) => {
     setCurUser(user);
@@ -40,6 +41,7 @@ function AppLayOut() {
 
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
+
     try {
       await fetch("https://x6vsmn-8081.csb.app/admin/logout", {
         method: "POST",
@@ -50,28 +52,36 @@ function AppLayOut() {
     } catch (error) {
       console.log(error);
     }
+
     localStorage.removeItem("token");
     localStorage.removeItem("curUser");
 
     setCurUser(null);
     nav("/login");
   };
+
   return (
     <div>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TopBar curUser={curUser} onLogout={handleLogout} onPhotoUploaded={handlePhotoUploaded}/>
+          <TopBar
+            curUser={curUser}
+            onLogout={handleLogout}
+            onPhotoUploaded={handlePhotoUploaded}
+          />
         </Grid>
+
         <div className="main-topbar-buffer" />
+
         {curUser && (
           <Grid item sm={3}>
             <Paper className="main-grid-item">
-              <UserList />
+              <UserList refreshKey={userListRefresh} />
             </Paper>
           </Grid>
         )}
 
-        <Grid item sm={9}>
+        <Grid item sm={curUser ? 9 : 12}>
           <Paper className="main-grid-item">
             <Routes>
               <Route
@@ -84,13 +94,14 @@ function AppLayOut() {
                   )
                 }
               />
+
               <Route
                 path="/login"
                 element={
                   curUser ? (
                     <Navigate to={`/users/${curUser._id}`} replace />
                   ) : (
-                    <Login onLogin={handleLogin} />
+                    <LoginRegister onLogin={handleLogin} />
                   )
                 }
               />
@@ -108,7 +119,7 @@ function AppLayOut() {
                 path="/photos/:userId"
                 element={
                   <ProtectedRoute currentUser={curUser}>
-                    <UserPhotos photoRefresh={photoRefresh}/>
+                    <UserPhotos photoRefresh={photoRefresh} />
                   </ProtectedRoute>
                 }
               />
@@ -121,6 +132,7 @@ function AppLayOut() {
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="*"
                 element={
