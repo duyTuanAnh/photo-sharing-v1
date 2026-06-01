@@ -23,7 +23,7 @@ function LoginRegister({ onLogin }) {
 
   const onSubmitLogin = async (data) => {
     try {
-      const res = await fetch(`https://x6vsmn-8081.csb.app/admin/login`, {
+      const res = await fetch(`https://nws8dc-8081.csb.app/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ function AddComment({ photoId, onCommentAdded }) {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `https://x6vsmn-8081.csb.app/api/commentsOfPhoto/${photoId}`,
+        `https://nws8dc-8081.csb.app/api/commentsOfPhoto/${photoId}`,
         {
           method: "POST",
           headers: {

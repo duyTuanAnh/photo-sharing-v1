@@ -7,7 +7,7 @@
 const fetchModel = async (url) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch(`https://x6vsmn-8081.csb.app/api${url}`, {
+    const response = await fetch(`https://nws8dc-8081.csb.app/api${url}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

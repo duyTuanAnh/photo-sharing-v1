@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 import AddComment from "../../components/AddComment";
 
-function UserPhotos({photoRefresh}) {
+function UserPhotos({ photoRefresh }) {
   const { userId } = useParams();
 
   const [photos, setPhotos] = useState([]);
@@ -58,7 +58,7 @@ function UserPhotos({photoRefresh}) {
         <div key={photo._id} style={{ marginBottom: "30px" }}>
           <hr />
           <img
-            src={`https://x6vsmn-8081.csb.app/images/${photo.file_name}`}
+            src={`https://nws8dc-8081.csb.app/images/${photo.file_name}`}
             alt=""
             style={{ maxWidth: "400px" }}
           />

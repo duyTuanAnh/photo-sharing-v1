@@ -40,7 +40,7 @@ function UserComments() {
             state={{ selectedPhotoId: item.photo._id }}
           >
             <img
-              src={`https://x6vsmn-8081.csb.app/images/${item.photo.file_name}`}
+              src={`https://nws8dc-8081.csb.app/images/${item.photo.file_name}`}
               alt={item.photo.file_name}
               style={{ width: "120px" }}
             />
