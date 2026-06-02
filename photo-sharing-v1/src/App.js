@@ -110,7 +110,7 @@ function AppLayOut() {
                 path="/users/:userId"
                 element={
                   <ProtectedRoute currentUser={curUser}>
-                    <UserDetail />
+                    <UserDetail currentUser={curUser}/>
                   </ProtectedRoute>
                 }
               />
@@ -119,7 +119,7 @@ function AppLayOut() {
                 path="/photos/:userId"
                 element={
                   <ProtectedRoute currentUser={curUser}>
-                    <UserPhotos photoRefresh={photoRefresh} />
+                    <UserPhotos photoRefresh={photoRefresh} currentUser={curUser}/>
                   </ProtectedRoute>
                 }
               />

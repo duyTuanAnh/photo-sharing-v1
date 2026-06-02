@@ -28,7 +28,7 @@ function UserList() {
           <Link to={`/users/${user._id}`}>
             {user.first_name} {user.last_name}
           </Link>
-          <span
+          {/* <span
             style={{
               width: "26px",
               height: "26px",
@@ -61,7 +61,7 @@ function UserList() {
             }}
           >
             {user.commentCount}
-          </Link>
+          </Link> */}
         </div>
       ))}
     </div>

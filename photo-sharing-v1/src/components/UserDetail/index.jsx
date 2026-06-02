@@ -4,7 +4,7 @@ import "./styles.css";
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 
-function UserDetail() {
+function UserDetail({ currentUser }) {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
 
@@ -34,6 +34,8 @@ function UserDetail() {
       >
         View Photos
       </Link>
+      {currentUser._id == userId && (<Link to={`/comments/${user._id}`}> View Comments</Link>)}
+      
     </div>
   );
 }

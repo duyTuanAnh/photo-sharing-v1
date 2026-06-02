@@ -25,7 +25,7 @@ function TopBar({ curUser, onLogout, onPhotoUploaded }) {
     formData.append("uploadedphoto", file);
 
     try {
-      const res = await fetch("https://x6vsmn-8081.csb.app/api/photos/new", {
+      const res = await fetch("https://nws8dc-8081.csb.app/api/photos/new", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

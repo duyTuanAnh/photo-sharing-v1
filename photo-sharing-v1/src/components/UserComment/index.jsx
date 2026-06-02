@@ -4,26 +4,46 @@ import fetchModel from "../../lib/fetchModelData";
 
 function UserComments() {
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
   const [comments, setComments] = useState([]);
 
+  const loadData = async () => {
+    try {
+      const userData = await fetchModel(`/user/${userId}`);
+      setUser(userData);
+
+      const commentData = await fetchModel(`/commentsOfUser/${userId}`);
+      setComments(commentData);
+    } catch (error) {
+      setUser(null);
+      setComments([]);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const userData = await fetchModel(`/user/${userId}`);
-        setUser(userData);
-
-        const commentsData = await fetchModel(`/commentsOfUser/${userId}`);
-        setComments(commentsData);
-      } catch (error) {
-        console.error("Error fetching user comments:", error);
-        setUser(null);
-        setComments([]);
-      }
-    };
-
     loadData();
   }, [userId]);
+
+  const handleDeleteComment = async (commentId, photoId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://nws8dc-8081.csb.app/api/comment/${commentId}/ofPhoto/${photoId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
+        console.log("ok");
+        loadData();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -34,26 +54,24 @@ function UserComments() {
       </h2>
 
       {comments.map((item) => (
-        <div key={item._id} style={{ marginBottom: "20px" }}>
-          <Link
-            to={`/photos/${item.photo.user_id}`}
-            state={{ selectedPhotoId: item.photo._id }}
-          >
+        <div key={item._id}>
+          <Link to={`/photos/${item.photo.user_id}`}>
             <img
               src={`https://nws8dc-8081.csb.app/images/${item.photo.file_name}`}
-              alt={item.photo.file_name}
               style={{ width: "120px" }}
             />
           </Link>
 
           <div>
-            <Link
-              to={`/photos/${item.photo.user_id}`}
-              state={{ selectedPhotoId: item.photo._id }}
+            <Link to={`/photos/${item.photo.user_id}`}>{item.comment}</Link>
+            <button
+              onClick={() => handleDeleteComment(item._id, item.photo._id)}
+              style={{ marginLeft: "12px" }}
             >
-              {item.comment}
-            </Link>
+              Delete
+            </button>
           </div>
+          <br />
         </div>
       ))}
     </div>

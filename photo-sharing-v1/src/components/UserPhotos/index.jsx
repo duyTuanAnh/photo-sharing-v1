@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 import AddComment from "../../components/AddComment";
 
-function UserPhotos({ photoRefresh }) {
+function UserPhotos({ photoRefresh, currentUser }) {
   const { userId } = useParams();
 
   const [photos, setPhotos] = useState([]);
@@ -48,6 +48,24 @@ function UserPhotos({ photoRefresh }) {
     );
   };
 
+  const handleDeletePhoto = async (photoId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`https://nws8dc-8081.csb.app/api/photo/${photoId}`,{
+        method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
+      })
+
+      setPhotos((prev) =>
+        prev.filter((photo) => photo._id !== photoId)
+      );
+    }catch(error){
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <h2>
@@ -65,6 +83,9 @@ function UserPhotos({ photoRefresh }) {
 
           <h2>Created at: {formatDateTime(photo.date_time)}</h2>
 
+          {photo.user_id === currentUser._id && (
+            <button onClick={()=>handleDeletePhoto(photo._id)}>Delete</button>
+          )}
           <div style={{ marginLeft: "20px" }}>
             {(photo.comments || []).length === 0 && <h4>No comments</h4>}
 
